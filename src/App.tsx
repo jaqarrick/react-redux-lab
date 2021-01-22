@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react"
+import { useDispatch, useSelector } from "react-redux"
+import NoteInput from "./components/NoteInput"
+import { NotesState } from "./store/reducer"
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const notes = useSelector<NotesState, NotesState["notes"]>(
+		state => state.notes
+	)
+	const dispatch = useDispatch()
+
+	const addNote = React.useCallback(
+		(note: string) => {
+			dispatch({ type: "ADD_NOTE", payload: note })
+		},
+		[dispatch]
+	)
+	return (
+		<>
+			<NoteInput addNote={addNote} />
+			<hr />
+			<ul>
+				{notes.map(note => (
+					<li key={note}>{note}</li>
+				))}
+			</ul>
+		</>
+	)
 }
 
-export default App;
+export default App
