@@ -1,22 +1,43 @@
-import { Action } from "../actions/actions"
+import { ADD_NOTE, REMOVE_NOTE } from "../actions/types"
+
+export interface NotesObject {
+    id: string
+    content: string
+}
 
 export interface NotesState {
-	notes: string[]
+    notes: NotesObject[]
 }
 
 const initialState = {
-	notes: [],
+    notes: [],
 }
 
-export const notesReducer = (
-	state: NotesState = initialState,
-	action: Action
-) => {
-	switch (action.type) {
-		case "ADD_NOTE": {
-			return { ...state, notes: [...state.notes, action.payload] }
-		}
-		default:
-			return state
-	}
+export const notesReducer = (state: NotesState = initialState, action: any) => {
+    switch (action.type) {
+        case ADD_NOTE: {
+            const newNotesObject = {
+                id: action.payload.id,
+                content: action.payload.content,
+            }
+
+            return {
+                ...state,
+                notes: [...state.notes, newNotesObject],
+            }
+        }
+        case REMOVE_NOTE: {
+
+            const filteredNotes = state.notes.filter(
+                ({ id }) => id !== action.payload.id
+            )
+
+            return {
+                ...state,
+                notes: filteredNotes,
+            }
+        }
+        default:
+            return state
+    }
 }
