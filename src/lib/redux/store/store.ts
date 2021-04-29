@@ -1,3 +1,3 @@
 import { createStore } from "redux"
-import { notesReducer } from "./reducer"
+import { notesReducer } from "../reducers/reducer"
 export const store = createStore(notesReducer)

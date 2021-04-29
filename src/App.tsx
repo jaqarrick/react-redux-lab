@@ -1,12 +1,14 @@
 import * as React from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { connect, useDispatch } from "react-redux"
 import NoteInput from "./components/NoteInput"
-import { NotesState } from "./store/reducer"
+import { NotesState } from "./lib/redux/reducers/reducer"
 
-function App() {
-	const notes = useSelector<NotesState, NotesState["notes"]>(
-		state => state.notes
-	)
+interface Props {
+	notes: string[]
+}
+
+const App: React.FC<Props> = ({notes}) => {
+	
 	const dispatch = useDispatch()
 
 	const addNote = React.useCallback(
@@ -28,4 +30,10 @@ function App() {
 	)
 }
 
-export default App
+const mapStateToProps = (state: NotesState) => ({
+		notes: state.notes
+	})
+
+
+
+export default connect(mapStateToProps)(App)
