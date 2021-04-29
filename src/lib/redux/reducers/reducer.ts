@@ -1,4 +1,5 @@
-import { ADD_NOTE, REMOVE_NOTE } from "../actions/types"
+import { AnyAction, combineReducers } from "redux"
+import { ADD_NOTE, REMOVE_NOTE, SELECT_NOTE } from "../actions/types"
 
 export interface NotesObject {
     id: string
@@ -9,11 +10,29 @@ export interface NotesState {
     notes: NotesObject[]
 }
 
+export interface AllNotesState {
+    notesData: NotesState
+    selectedNote: null | string
+}
+
 const initialState = {
     notes: [],
 }
 
-export const notesReducer = (state: NotesState = initialState, action: any) => {
+const selectedNoteReducer = (
+    selectedNote: null | string = null,
+    action: AnyAction
+) => {
+    switch (action.type) {
+        case SELECT_NOTE: {
+            return action.payload.content
+        }
+        default:
+            return selectedNote
+    }
+}
+
+const notesReducer = (state: NotesState = initialState, action: AnyAction) => {
     switch (action.type) {
         case ADD_NOTE: {
             const newNotesObject = {
@@ -27,7 +46,6 @@ export const notesReducer = (state: NotesState = initialState, action: any) => {
             }
         }
         case REMOVE_NOTE: {
-
             const filteredNotes = state.notes.filter(
                 ({ id }) => id !== action.payload.id
             )
@@ -41,3 +59,10 @@ export const notesReducer = (state: NotesState = initialState, action: any) => {
             return state
     }
 }
+
+const rootReducer = combineReducers({
+    notesData: notesReducer,
+    selectedNote: selectedNoteReducer,
+})
+
+export default rootReducer

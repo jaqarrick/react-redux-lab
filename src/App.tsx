@@ -1,61 +1,77 @@
 import * as React from "react"
-import { connect, useDispatch } from "react-redux"
+import { connect } from "react-redux"
 import NoteInput from "./components/NoteInput"
-import { NotesState, NotesObject } from "./lib/redux/reducers/reducer"
+import { NotesObject, AllNotesState } from "./lib/redux/reducers/reducer"
 import { v4 as uuid } from "uuid"
-import { ADD_NOTE, REMOVE_NOTE } from "./lib/redux/actions/types"
+import {
+    AddNote,
+    addNote,
+    RemoveNote,
+    removeNote,
+    SelectNote,
+    selectNote,
+} from "./lib/redux/actions/actions"
+import SelectedNoteDisplay from "./components/SelectedNoteDisplay"
 
 interface Props {
     notes: NotesObject[]
+    addNote: (note: string, id: string) => AddNote
+    removeNote: (id: string) => RemoveNote
+    selectNote: (content: string) => SelectNote
 }
 
-const App: React.FC<Props> = ({ notes }) => {
-    const dispatch = useDispatch()
-
-    const addNote = React.useCallback(
+const App: React.FC<Props> = ({ notes, removeNote, addNote, selectNote }) => {
+    const onAddNote = React.useCallback(
         (note: string) => {
-            const payloadObj = {
-                content: note,
-                id: uuid(),
-            }
-
-            dispatch({ type: ADD_NOTE, payload: payloadObj })
+            addNote(note, uuid())
         },
-        [dispatch]
+        [addNote]
     )
 
-    const removeNote = React.useCallback(
+    const onRemoveNote = React.useCallback(
         (id: string) => {
-            dispatch({
-                type: REMOVE_NOTE,
-                payload: {
-                    id,
-                },
-            })
+            removeNote(id)
         },
-        [dispatch]
+        [removeNote]
     )
     return (
         <>
-            <NoteInput addNote={addNote} />
+            <NoteInput addNote={onAddNote} />
             <hr />
             <ul>
-                {notes.map(note => (
+                {notes?.map(note => (
                     <li key={note.id}>
                         <span>{note.content}</span>
-                        <button onClick={() => removeNote(note.id)}>
+                        <button onClick={() => onRemoveNote(note.id)}>
                             {" "}
                             Remove{" "}
+                        </button>
+                        <button
+                            onClick={() => {
+                                selectNote(note.content)
+                            }}
+                        >
+                            {" "}
+                            Select{" "}
                         </button>
                     </li>
                 ))}
             </ul>
+            <footer>
+                <SelectedNoteDisplay />
+            </footer>
         </>
     )
 }
 
-const mapStateToProps = (state: NotesState) => ({
-    notes: state.notes,
-})
+const mapStateToProps = (state: AllNotesState) => {
+    return {
+        notes: state.notesData.notes,
+    }
+}
 
-export default connect(mapStateToProps)(App)
+export default connect(mapStateToProps, {
+    addNote,
+    removeNote,
+    selectNote,
+})(App)

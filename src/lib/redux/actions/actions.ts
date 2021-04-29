@@ -1,4 +1,4 @@
-import {ADD_NOTE, REMOVE_NOTE} from './types'
+import {ADD_NOTE, REMOVE_NOTE, SELECT_NOTE} from './types'
 
 
 export type AddNote = { 
@@ -16,6 +16,13 @@ export type RemoveNote = {
 	}
 }
 
+export type SelectNote = {
+	type: string,
+	payload: {
+		content: string
+	}
+}
+
 export const addNote = (note: string, id: string): AddNote => ({
 	type: ADD_NOTE,
 	payload: {
@@ -24,10 +31,16 @@ export const addNote = (note: string, id: string): AddNote => ({
 	},
 })
 
-export const removeNote = (id: string) => ({
+export const removeNote = (id: string): RemoveNote => ({
 	type: REMOVE_NOTE,
 	payload: {
 		id
 	}
 })
 
+export const selectNote = (content:string):SelectNote => ({
+	type: SELECT_NOTE,
+	payload: {
+		content
+	}
+})
